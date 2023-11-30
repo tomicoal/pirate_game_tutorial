@@ -3,6 +3,7 @@ from tiles import Tile
 from settings import tile_size, screen_with
 from player import Player
 from particles import ParticleEffect
+from support import import_csv_layout
 
 
 class Level:
@@ -13,6 +14,7 @@ class Level:
         self.setup_level(level_data)
         self.world_shift = 0
         self.current_x = 0
+        terrain_layout = import_csv_layout(level_data['terrain'])
 
         # Dust
         self.dust_sprite = pygame.sprite.GroupSingle()
