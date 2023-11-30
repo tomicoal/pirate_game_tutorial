@@ -11,7 +11,7 @@ class Level:
 
         # General setup
         self.display_surface = surface
-        self.world_shift = 0
+        self.world_shift = -5
         self.current_x = 0
 
         # terrain setup
@@ -97,7 +97,10 @@ class Level:
                             sprite = CoinTile(tile_size, x, y, './graphics/coins/silver')
 
                     if type == 'fg_palms':
-                        sprite = PalmsTile(tile_size, x, y, './graphics/terrain/palm_small')
+                        if val == "0":
+                            sprite = PalmsTile(tile_size, x, y, './graphics/terrain/palm_small', 38)
+                        else:
+                            sprite = PalmsTile(tile_size, x, y, './graphics/terrain/palm_large', 64)
 
                     sprite_group.add(sprite)
 
