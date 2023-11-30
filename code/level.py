@@ -1,5 +1,5 @@
 import pygame
-from tiles import Tile, StaticTile
+from tiles import Tile, StaticTile, Crate
 from settings import tile_size, screen_with
 from player import Player
 from particles import ParticleEffect
@@ -11,12 +11,20 @@ class Level:
 
         # General setup
         self.display_surface = surface
-        self.world_shift = 0
+        self.world_shift = -5
         self.current_x = 0
 
         # terrain setup
         terrain_layout = import_csv_layout(level_data['terrain'])
         self.terrain_sprites = self.create_tile_group(terrain_layout, 'terrain')
+
+        # grass setup
+        grass_layout = import_csv_layout(level_data['grass'])
+        self.grass_sprites = self.create_tile_group(grass_layout, 'grass')
+
+        # crates
+        crates_layout = import_csv_layout(level_data['crates'])
+        self.crates_sprite = self.create_tile_group(crates_layout, 'crates')
 
         # Dust
         self.dust_sprite = pygame.sprite.GroupSingle()
@@ -62,7 +70,16 @@ class Level:
                         terrain_tile_list = import_cut_graphics('./graphics/terrain/terrain_tiles.png')
                         tile_surface = terrain_tile_list[int(val)]
                         sprite = StaticTile(tile_size, x, y, tile_surface)
-                        sprite_group.add(sprite)
+
+                    if type == 'grass':
+                        grass_tile_list = import_cut_graphics('./graphics/decoration/grass/grass.png')
+                        tile_surface = grass_tile_list[int(val)]
+                        sprite = StaticTile(tile_size, x, y, tile_surface)
+
+                    if type == 'crates':
+                        sprite = Crate(tile_size, x, y)
+
+                    sprite_group.add(sprite)
 
         return sprite_group
 
@@ -125,13 +142,20 @@ class Level:
 
 
     def run(self):
+        # run the entire game / level
         # #Dust
         # self.dust_sprite.update(self.world_shift)
         # self.dust_sprite.draw(self.display_surface)
 
-        # Level tiles
+        # terrain
         self.terrain_sprites.draw(self.display_surface)
         self.terrain_sprites.update(self.world_shift)
+        # grass
+        self.grass_sprites.draw(self.display_surface)
+        self.grass_sprites.update(self.world_shift)
+        # crates
+        self.crates_sprite.draw(self.display_surface)
+        self.crates_sprite.update(self.world_shift)
 
         # Player
         # self.player.update()
