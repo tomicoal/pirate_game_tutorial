@@ -128,7 +128,6 @@ class Level:
         self.tiles.draw(self.display_surface)
         self.scroll_x()
 
-
         # Player
         self.player.update()
         self.horizontal_movement_collision()
