@@ -21,3 +21,6 @@ def import_csv_layout(path):
         for row in level:
             terrain_map.append(list(row))
         return terrain_map
+
+
+
