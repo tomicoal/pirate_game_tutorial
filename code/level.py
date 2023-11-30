@@ -3,7 +3,7 @@ from tiles import Tile
 from settings import tile_size, screen_with
 from player import Player
 from particles import ParticleEffect
-from support import import_csv_layout
+from support import import_csv_layout, import_cut_graphics
 
 
 class Level:
