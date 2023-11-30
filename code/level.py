@@ -1,5 +1,5 @@
 import pygame
-from tiles import Tile, StaticTile, Crate
+from tiles import StaticTile, Crate, CoinTile, PalmsTile
 from settings import tile_size, screen_with
 from player import Player
 from particles import ParticleEffect
@@ -11,7 +11,7 @@ class Level:
 
         # General setup
         self.display_surface = surface
-        self.world_shift = -5
+        self.world_shift = 0
         self.current_x = 0
 
         # terrain setup
@@ -25,6 +25,14 @@ class Level:
         # crates
         crates_layout = import_csv_layout(level_data['crates'])
         self.crates_sprite = self.create_tile_group(crates_layout, 'crates')
+
+        # coins
+        coins_layout = import_csv_layout(level_data['coins'])
+        self.coins_sprite = self.create_tile_group(coins_layout, 'coins')
+
+        # foreground palms
+        fg_palms_layout = import_csv_layout(level_data['fg_palms'])
+        self.fg_palms_sprite = self.create_tile_group(fg_palms_layout, 'fg_palms')
 
         # Dust
         self.dust_sprite = pygame.sprite.GroupSingle()
@@ -62,10 +70,12 @@ class Level:
 
         for row_index, row in enumerate(layout):
             for col_index, val in enumerate(row):
+                # !! values in csv are strings !!
                 if val != '-1':
                     x = col_index * tile_size
                     y = row_index * tile_size
 
+                    # static
                     if type == 'terrain':
                         terrain_tile_list = import_cut_graphics('./graphics/terrain/terrain_tiles.png')
                         tile_surface = terrain_tile_list[int(val)]
@@ -78,6 +88,16 @@ class Level:
 
                     if type == 'crates':
                         sprite = Crate(tile_size, x, y)
+
+                    # animated
+                    if type == 'coins':
+                        if val == "0":
+                            sprite = CoinTile(tile_size, x, y, './graphics/coins/gold')
+                        else:
+                            sprite = CoinTile(tile_size, x, y, './graphics/coins/silver')
+
+                    if type == 'fg_palms':
+                        sprite = PalmsTile(tile_size, x, y, './graphics/terrain/palm_small')
 
                     sprite_group.add(sprite)
 
@@ -156,6 +176,12 @@ class Level:
         # crates
         self.crates_sprite.draw(self.display_surface)
         self.crates_sprite.update(self.world_shift)
+        # coins
+        self.coins_sprite.draw(self.display_surface)
+        self.coins_sprite.update(self.world_shift)
+        # palms
+        self. fg_palms_sprite.draw(self.display_surface)
+        self.fg_palms_sprite.update(self.world_shift)
 
         # Player
         # self.player.update()
