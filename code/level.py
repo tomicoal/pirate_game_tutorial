@@ -1,10 +1,11 @@
 import pygame
 from tiles import Tile, StaticTile, Crate, CoinTile, PalmsTile
 from enemy import Enemy
-from settings import tile_size, screen_with
+from settings import tile_size, screen_width, screen_height
 from player import Player
 from particles import ParticleEffect
 from support import import_csv_layout, import_cut_graphics
+from decoration import Sky, Water, Clouds
 
 
 class Level:
@@ -12,7 +13,7 @@ class Level:
 
         # General setup
         self.display_surface = surface
-        self.world_shift = -5
+        self.world_shift = 0
         self.current_x = 0
 
         # player setup
@@ -57,6 +58,12 @@ class Level:
         self.dust_sprite = pygame.sprite.GroupSingle()
         self.player_on_ground = False
 
+        # decorations
+        self.sky = Sky(7)
+        level_width = len(terrain_layout[0]) * tile_size
+        self.water = Water(screen_height - 40, level_width)
+        self.clouds = Clouds(350, level_width, 30)
+
 
     # def create_jump_particles(self, pos):
     #     if self.player.sprite.facing_right:
@@ -65,8 +72,8 @@ class Level:
     #         pos += pygame.math.Vector2(10, 3)
     #     jump_particle_sprite = ParticleEffect(pos, "jump")
     #     self.dust_sprite.add(jump_particle_sprite)
-
-
+    #
+    #
     # def get_player_on_ground(self):
     #     if self.player.sprite.on_ground:
     #         self.player_on_ground = True
@@ -159,10 +166,10 @@ class Level:
     #     player_x = player.rect.centerx
     #     direction_x = player.direction.x
     #
-    #     if player_x < screen_with/5 and direction_x < 0:
+    #     if player_x < screen_width/5 and direction_x < 0:
     #         self.world_shift = 8
     #         player.speed = 0
-    #     elif player_x > (screen_with/5)*4 and direction_x > 0:
+    #     elif player_x > (screen_width/5)*4 and direction_x > 0:
     #         self.world_shift = -8
     #         player.speed = 0
     #     else:
@@ -213,9 +220,13 @@ class Level:
 
     def run(self):
         # run the entire game / level
-        # #Dust
+        # Dust
         # self.dust_sprite.update(self.world_shift)
         # self.dust_sprite.draw(self.display_surface)
+
+        # decoration
+        self.sky.draw(self.display_surface)
+        self.clouds.draw(self.display_surface, self.world_shift)
 
         # background palms
         self.bg_palms_sprite.update(self.world_shift)
@@ -229,7 +240,7 @@ class Level:
         self.enemies_sprite.draw(self.display_surface)
         # constraints
         self.constraint_sprite.update(self.world_shift)
-        self.constraint_sprite.draw(self.display_surface)
+        # self.constraint_sprite.draw(self.display_surface)
         self.enemy_collision_reverse()
         # crates
         self.crates_sprite.update(self.world_shift)
@@ -247,11 +258,11 @@ class Level:
         self.goal.update(self.world_shift)
         self.goal.draw(self.display_surface)
 
+        # water decoration
+        self.water.draw(self.display_surface, self.world_shift)
 
 
-
-
-        # Player
+        # player
         # self.player.update()
         # self.horizontal_movement_collision()
         # self.get_player_on_ground()

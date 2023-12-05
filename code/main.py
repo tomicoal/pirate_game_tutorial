@@ -5,7 +5,7 @@ from level import Level
 from game_data import level_0
 
 pygame.init()
-screen = pygame.display.set_mode((screen_with, screen_height))  # Height / width
+screen = pygame.display.set_mode((screen_width, screen_height))  # Height / width
 pygame.display.set_caption(title="Pirate Hunt")
 clock = pygame.time.Clock()
 level = Level(level_0, screen)
