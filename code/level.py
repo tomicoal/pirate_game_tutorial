@@ -6,6 +6,7 @@ from player import Player
 from particles import ParticleEffect
 from support import import_csv_layout, import_cut_graphics
 from decoration import Sky, Water, Clouds
+from game_data import levels
 
 
 class Level:
