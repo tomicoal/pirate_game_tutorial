@@ -10,15 +10,21 @@ from game_data import levels
 
 
 class Level:
-    def __init__(self, level_data, surface):
+    def __init__(self, current_level, surface, create_overworld):
 
         # General setup
         self.display_surface = surface
+        self.current_level = current_level
+        level_data = levels[current_level]
+        level_content = level_data['content']
+        self.new_max_level = level_data['unlock']
+        self.create_overworld = create_overworld
+
         self.world_shift = 0
         self.current_x = None
 
         # player setup
-        player_layout = import_csv_layout(level_data['player'])
+        player_layout = import_csv_layout(level_content['player'])
         self.player = pygame.sprite.GroupSingle()
         self.goal = pygame.sprite.GroupSingle()
         self.player_setup(player_layout)
@@ -28,35 +34,35 @@ class Level:
         self.player_on_ground = False
 
         # terrain setup
-        terrain_layout = import_csv_layout(level_data['terrain'])
+        terrain_layout = import_csv_layout(level_content['terrain'])
         self.terrain_sprites = self.create_tile_group(terrain_layout, 'terrain')
 
         # grass setup
-        grass_layout = import_csv_layout(level_data['grass'])
+        grass_layout = import_csv_layout(level_content['grass'])
         self.grass_sprites = self.create_tile_group(grass_layout, 'grass')
 
         # crates
-        crates_layout = import_csv_layout(level_data['crates'])
+        crates_layout = import_csv_layout(level_content['crates'])
         self.crates_sprite = self.create_tile_group(crates_layout, 'crates')
 
         # coins
-        coins_layout = import_csv_layout(level_data['coins'])
+        coins_layout = import_csv_layout(level_content['coins'])
         self.coins_sprite = self.create_tile_group(coins_layout, 'coins')
 
         # foreground palms
-        fg_palms_layout = import_csv_layout(level_data['fg_palms'])
+        fg_palms_layout = import_csv_layout(level_content['fg_palms'])
         self.fg_palms_sprite = self.create_tile_group(fg_palms_layout, 'fg_palms')
 
         # background palms
-        bg_palms_layout = import_csv_layout(level_data['bg_palms'])
+        bg_palms_layout = import_csv_layout(level_content['bg_palms'])
         self.bg_palms_sprite = self.create_tile_group(bg_palms_layout, 'bg_palms')
 
         # enemies
-        enemies_layout = import_csv_layout(level_data['enemies'])
+        enemies_layout = import_csv_layout(level_content['enemies'])
         self.enemies_sprite = self.create_tile_group(enemies_layout, 'enemies')
 
         # constraint
-        constraint_layout = import_csv_layout(level_data['constraints'])
+        constraint_layout = import_csv_layout(level_content['constraints'])
         self.constraint_sprite = self.create_tile_group(constraint_layout, 'constraints')
 
 
@@ -218,8 +224,21 @@ class Level:
             if player.on_ceiling and player.direction.y > 0:
                 player.on_ceiling = False
 
+
+    def input(self):
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_RETURN]:
+            self.create_overworld(self.current_level, self.new_max_level)
+        elif keys[pygame.K_ESCAPE]:
+            self.create_overworld(self.current_level, 0)
+
+
     def run(self):
         # run the entire game / level
+
+        # text
+        # self.display_surface.blit(self.text_surf, self.text_rect)
+        self.input()
 
         # decoration
         self.sky.draw(self.display_surface)
@@ -261,8 +280,6 @@ class Level:
         self.goal.update(self.world_shift)
         self.goal.draw(self.display_surface)
         self.scroll_x()
-
-
 
         # Dust
         self.dust_sprite.update(self.world_shift)

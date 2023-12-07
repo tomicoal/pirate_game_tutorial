@@ -31,12 +31,13 @@ class Icon(pygame.sprite.Sprite):
 
 
 class Overworld:
-    def __init__(self, start_level, max_level, surface):
+    def __init__(self, start_level, max_level, surface, create_level):
 
         # setup
         self.display_surface = surface
         self.max_level = max_level
         self.current_level = start_level
+        self.create_level = create_level
 
         # movement login
         self.move_direction = pygame.math.Vector2(0, 0)
@@ -76,6 +77,10 @@ class Overworld:
                 self.move_direction = self.get_movement_data('left')
                 self.current_level -= 1
                 self.moving = True
+            elif keys[pygame.K_SPACE]:
+                self.create_level(self.current_level)
+
+
 
     def get_movement_data(self, direction):
         if direction == 'right':
