@@ -14,11 +14,13 @@ class Level:
 
         # General setup
         self.display_surface = surface
+
+        # overworld connection
+        self.create_overworld = create_overworld
         self.current_level = current_level
-        level_data = levels[current_level]
+        level_data = levels[self.current_level]
         level_content = level_data['content']
         self.new_max_level = level_data['unlock']
-        self.create_overworld = create_overworld
 
         self.world_shift = 0
         self.current_x = None

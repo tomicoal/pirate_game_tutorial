@@ -35,15 +35,15 @@ level_2_tiles = {
     'node_graphics': './graphics/overworld/2'}
 
 level_3_tiles = {
-    'terrain': './levels/2/level_2_terrain.csv',
-    'coins': './levels/2/level_2_coins.csv',
-    'fg_palms': './levels/2/level_2_fg_palms.csv',
-    'bg_palms': './levels/2/level_2_bg_palms.csv',
-    'crates': './levels/2/level_2_crates.csv',
-    'enemies': './levels/2/level_2_enemies.csv',
-    'constraints': './levels/2/level_2_constraints.csv',
-    'player': './levels/2/level_2_player.csv',
-    'grass': './levels/2/level_2_grass.csv',
+    'terrain': './levels/3/level_3_terrain.csv',
+    'coins': './levels/3/level_3_coins.csv',
+    'fg_palms': './levels/3/level_3_fg_palms.csv',
+    'bg_palms': './levels/3/level_3_bg_palms.csv',
+    'crates': './levels/3/level_3_crates.csv',
+    'enemies': './levels/3/level_3_enemies.csv',
+    'constraints': './levels/3/level_3_constraints.csv',
+    'player': './levels/3/level_3_player.csv',
+    'grass': './levels/3/level_3_grass.csv',
     'node_graphics': './graphics/overworld/3'}
 
 level_4_tiles = {
