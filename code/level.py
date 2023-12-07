@@ -76,7 +76,7 @@ class Level:
 
     def create_jump_particles(self, pos):
         if self.player.sprite.facing_right:
-            pos -= pygame.math.Vector2(10,-3)
+            pos -= pygame.math.Vector2(10, -3)
         else:
             pos += pygame.math.Vector2(10, 3)
         jump_particle_sprite = ParticleEffect(pos, "jump")
@@ -135,13 +135,16 @@ class Level:
                             sprite = PalmsTile(tile_size, x, y, './graphics/terrain/palm_large', 64)
 
                     if type == 'bg_palms':
-                        sprite = PalmsTile(tile_size, x, y,'./graphics/terrain/palm_bg', 64)
+                        sprite = PalmsTile(tile_size, x, y, './graphics/terrain/palm_bg', 64)
 
                     if type == 'enemies':
                         sprite = Enemy(tile_size, x, y)
 
                     if type == 'constraints':
                         sprite = Tile(tile_size, x, y)
+
+                    else:
+                        pass
 
                     sprite_group.add(sprite)
 
@@ -226,6 +229,15 @@ class Level:
             if player.on_ceiling and player.direction.y > 0:
                 player.on_ceiling = False
 
+    def check_death(self):
+        if self.player.sprite.rect.top > screen_height:
+            self.create_overworld(self.current_level, 0)
+
+    def check_finish(self):
+        if pygame.sprite.spritecollide(self.player.sprite, self.goal, False):
+            self.create_overworld(self.current_level, self.new_max_level)
+
+
 
     def input(self):
         keys = pygame.key.get_pressed()
@@ -234,13 +246,11 @@ class Level:
         elif keys[pygame.K_ESCAPE]:
             self.create_overworld(self.current_level, 0)
 
-
     def run(self):
         # run the entire game / level
-
-        # text
-        # self.display_surface.blit(self.text_surf, self.text_rect)
         self.input()
+        self.check_death()
+        self.check_finish()
 
         # decoration
         self.sky.draw(self.display_surface)

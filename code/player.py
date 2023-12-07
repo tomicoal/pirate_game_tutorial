@@ -41,10 +41,8 @@ class Player(pygame.sprite.Sprite):
             full_path = character_path + animation
             self.animations[animation] = import_folder(full_path)
 
-
     def import_dust_run_particles(self):
         self.dust_run_particles = import_folder("./graphics/character/dust_particles/run")
-
 
     def animate(self):
         animation = self.animations[self.status]
@@ -74,7 +72,6 @@ class Player(pygame.sprite.Sprite):
         elif self.on_ceiling:
             self.rect = self.image.get_rect(midtop=self.rect.midtop)
 
-
     def run_dust_animate(self):
         if self.status == "run" and self.on_ground:
             self.dust_frame_index += self.dust_animation_speed
@@ -88,7 +85,6 @@ class Player(pygame.sprite.Sprite):
                 pos = self.rect.bottomright - pygame.math.Vector2(6, 10)
                 flipped_image = pygame.transform.flip(dust_particles, True, False)
                 self.display_surface.blit(flipped_image, pos)
-
 
     def get_input(self):
         keys = pygame.key.get_pressed()
@@ -105,7 +101,6 @@ class Player(pygame.sprite.Sprite):
             self.jump()
             self.create_jump_particles(self.rect.midbottom)
 
-
     def get_status(self):
         if self.direction.y < 0:
             self.status = "jump"
@@ -115,7 +110,6 @@ class Player(pygame.sprite.Sprite):
             self.status = "run"
         else:
             self.status = "idle"
-
 
     def apply_gravity(self):
         self.direction.y += self.gravity
