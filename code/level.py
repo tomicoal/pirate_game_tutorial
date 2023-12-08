@@ -10,7 +10,7 @@ from game_data import levels
 
 
 class Level:
-    def __init__(self, current_level, surface, create_overworld):
+    def __init__(self, current_level, surface, create_overworld, change_coins, change_health):
 
         # General setup
         self.display_surface = surface
@@ -29,11 +29,16 @@ class Level:
         player_layout = import_csv_layout(level_content['player'])
         self.player = pygame.sprite.GroupSingle()
         self.goal = pygame.sprite.GroupSingle()
-        self.player_setup(player_layout)
+        self.player_setup(player_layout, change_health)
+
+        # UI
+        self.change_coins = change_coins
 
         # dust
         self.dust_sprite = pygame.sprite.GroupSingle()
         self.player_on_ground = False
+        # explosion
+        self.explosion_sprites = pygame.sprite.Group()
 
         # terrain setup
         terrain_layout = import_csv_layout(level_content['terrain'])
@@ -75,9 +80,9 @@ class Level:
 
     def create_jump_particles(self, pos):
         if self.player.sprite.facing_right:
-            pos -= pygame.math.Vector2(10, -3)
+            pos -= pygame.math.Vector2(10, 15)
         else:
-            pos += pygame.math.Vector2(10, 3)
+            pos += pygame.math.Vector2(10, -15)
         jump_particle_sprite = ParticleEffect(pos, "jump")
         self.dust_sprite.add(jump_particle_sprite)
 
@@ -90,9 +95,9 @@ class Level:
     def create_landing_dust(self):
         if not self.player_on_ground and self.player.sprite.on_ground and not self.dust_sprite.sprites():
             if self.player.sprite.facing_right:
-                offset = pygame.math.Vector2(10, 0)
+                offset = pygame.math.Vector2(10, 15)
             else:
-                offset = pygame.math.Vector2(-10, 0)
+                offset = pygame.math.Vector2(-10, -15)
             fall_dust_particle = ParticleEffect(self.player.sprite.rect.midbottom - offset, "land")
             self.dust_sprite.add(fall_dust_particle)
 
@@ -123,9 +128,9 @@ class Level:
                     # animated
                     if tile_type == 'coins':
                         if val == "0":
-                            sprite = CoinTile(tile_size, x, y, './graphics/coins/gold')
+                            sprite = CoinTile(tile_size, x, y, './graphics/coins/gold',5)
                         else:
-                            sprite = CoinTile(tile_size, x, y, './graphics/coins/silver')
+                            sprite = CoinTile(tile_size, x, y, './graphics/coins/silver',1)
 
                     if tile_type == 'fg_palms':
                         if val == "0":
@@ -146,14 +151,14 @@ class Level:
 
         return sprite_group
 
-    def player_setup(self, layout):
+    def player_setup(self, layout, change_health):
         for row_index, row in enumerate(layout):
             for col_index, val in enumerate(row):
                 x = col_index * tile_size
                 y = row_index * tile_size
                 # !! values in csv are strings !!
                 if val == '0':
-                    sprite = Player((x, y), self.display_surface, self.create_jump_particles)
+                    sprite = Player((x, y), self.display_surface, self.create_jump_particles, change_health)
                     self.player.add(sprite)
                 if val == '1':
                     hat_surface = pygame.image.load('./graphics/character/hat.png').convert_alpha()
@@ -233,6 +238,31 @@ class Level:
         if pygame.sprite.spritecollide(self.player.sprite, self.goal, False):
             self.create_overworld(self.current_level, self.new_max_level)
 
+    def check_coin_collision(self):
+        collided_coins = pygame.sprite.spritecollide(self.player.sprite, self.coins_sprite, True)
+        if collided_coins:
+            for coins in collided_coins:
+                self.change_coins(coins.value)
+
+    def check_enemy_collision(self):
+        player = self.player.sprite
+        enemies = self.enemies_sprite
+        enemy_collisions = pygame.sprite.spritecollide(player, enemies, False)
+
+        if enemy_collisions:
+            for enemy in enemy_collisions:
+                enemy_center = enemy.rect.centery
+                enemy_top = enemy.rect.top
+                player_bottom = player.rect.bottom
+                if enemy_top < player_bottom < enemy_center and player.direction.y >= 0:
+                    explosion_sprite = ParticleEffect(enemy.rect.center, "explosion")
+                    self.explosion_sprites.add(explosion_sprite)
+                    player.jump()
+                    enemy.kill()
+                else:
+                    player.get_damage()
+
+
     def input(self):
         keys = pygame.key.get_pressed()
         if keys[pygame.K_RETURN]:
@@ -245,6 +275,8 @@ class Level:
         self.input()
         self.check_death()
         self.check_finish()
+        self.check_coin_collision()
+        self.check_enemy_collision()
 
         # decoration
         self.sky.draw(self.display_surface)
@@ -260,6 +292,9 @@ class Level:
         # enemies
         self.enemies_sprite.update(self.world_shift)
         self.enemies_sprite.draw(self.display_surface)
+        # explosion
+        self.explosion_sprites.update(self.world_shift)
+        self.explosion_sprites.draw(self.display_surface)
         # constraints
         self.constraint_sprite.update(self.world_shift)
         # self.constraint_sprite.draw(self.display_surface)
@@ -290,6 +325,8 @@ class Level:
         # Dust
         self.dust_sprite.update(self.world_shift)
         self.dust_sprite.draw(self.display_surface)
+
+
 
         # water decoration
         self.water.draw(self.display_surface, self.world_shift)

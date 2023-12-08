@@ -57,7 +57,7 @@ class Overworld:
 
         # movement login
         self.move_direction = pygame.math.Vector2(0, 0)
-        self.speed = 4
+        self.speed = 8
         self.moving = False
 
         # sprites
