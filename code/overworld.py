@@ -31,7 +31,7 @@ class Node(pygame.sprite.Sprite):
         else:
             tint_surface = self.image.copy()
             tint_surface.fill('black', None, pygame.BLEND_RGB_MULT)
-            self.image.blit(tint_surface,(0, 0))
+            self.image.blit(tint_surface, (0, 0))
 
 
 class Icon(pygame.sprite.Sprite):
@@ -65,11 +65,13 @@ class Overworld:
         self.setup_icon()
         self.sky = Sky(7, 'overworld')
 
+
     def setup_nodes(self):
         self.nodes = pygame.sprite.Group()
         for index, node_data in enumerate(levels.values()):
             if index <= self.max_level:
-                node_sprite = Node(node_data['node_pos'], 'available', self.speed, node_data['content']['node_graphics'])
+                node_sprite = Node(node_data['node_pos'], 'available',
+                                   self.speed, node_data['content']['node_graphics'])
             else:
                 node_sprite = Node(node_data['node_pos'], 'locked', self.speed, node_data['content']['node_graphics'])
             self.nodes.add(node_sprite)

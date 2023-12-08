@@ -67,7 +67,6 @@ class Level:
         constraint_layout = import_csv_layout(level_content['constraints'])
         self.constraint_sprite = self.create_tile_group(constraint_layout, 'constraints')
 
-
         # decorations
         self.sky = Sky(7)
         level_width = len(terrain_layout[0]) * tile_size
@@ -97,7 +96,7 @@ class Level:
             fall_dust_particle = ParticleEffect(self.player.sprite.rect.midbottom - offset, "land")
             self.dust_sprite.add(fall_dust_particle)
 
-    def create_tile_group(self, layout, type):
+    def create_tile_group(self, layout, tile_type):
         sprite_group = pygame.sprite.Group()
 
         for row_index, row in enumerate(layout):
@@ -108,43 +107,40 @@ class Level:
                     y = row_index * tile_size
 
                     # static
-                    if type == 'terrain':
+                    if tile_type == 'terrain':
                         terrain_tile_list = import_cut_graphics('./graphics/terrain/terrain_tiles.png')
                         tile_surface = terrain_tile_list[int(val)]
                         sprite = StaticTile(tile_size, x, y, tile_surface)
 
-                    if type == 'grass':
+                    if tile_type == 'grass':
                         grass_tile_list = import_cut_graphics('./graphics/decoration/grass/grass.png')
                         tile_surface = grass_tile_list[int(val)]
                         sprite = StaticTile(tile_size, x, y, tile_surface)
 
-                    if type == 'crates':
+                    if tile_type == 'crates':
                         sprite = Crate(tile_size, x, y)
 
                     # animated
-                    if type == 'coins':
+                    if tile_type == 'coins':
                         if val == "0":
                             sprite = CoinTile(tile_size, x, y, './graphics/coins/gold')
                         else:
                             sprite = CoinTile(tile_size, x, y, './graphics/coins/silver')
 
-                    if type == 'fg_palms':
+                    if tile_type == 'fg_palms':
                         if val == "0":
                             sprite = PalmsTile(tile_size, x, y, './graphics/terrain/palm_small', 38)
                         else:
                             sprite = PalmsTile(tile_size, x, y, './graphics/terrain/palm_large', 64)
 
-                    if type == 'bg_palms':
+                    if tile_type == 'bg_palms':
                         sprite = PalmsTile(tile_size, x, y, './graphics/terrain/palm_bg', 64)
 
-                    if type == 'enemies':
+                    if tile_type == 'enemies':
                         sprite = Enemy(tile_size, x, y)
 
-                    if type == 'constraints':
+                    if tile_type == 'constraints':
                         sprite = Tile(tile_size, x, y)
-
-                    else:
-                        pass
 
                     sprite_group.add(sprite)
 
@@ -174,10 +170,10 @@ class Level:
         player_x = player.rect.centerx
         direction_x = player.direction.x
 
-        if player_x < screen_width/3 and direction_x < 0:
+        if player_x < screen_width / 3 and direction_x < 0:
             self.world_shift = 8
             player.speed = 0
-        elif player_x > (screen_width/3)*2 and direction_x > 0:
+        elif player_x > (screen_width / 3) * 2 and direction_x > 0:
             self.world_shift = -8
             player.speed = 0
         else:
@@ -189,7 +185,7 @@ class Level:
         player.rect.x += player.direction.x * player.speed
 
         collidable_sprites = (self.terrain_sprites.sprites() + self.crates_sprite.sprites()
-                               + self.fg_palms_sprite.sprites())
+                              + self.fg_palms_sprite.sprites())
         for sprite in collidable_sprites:
             if sprite.rect.colliderect(player.rect):
                 if player.direction.x < 0:
@@ -211,7 +207,7 @@ class Level:
         player.apply_gravity()
 
         collidable_sprites = (self.terrain_sprites.sprites() + self.crates_sprite.sprites()
-                               + self.fg_palms_sprite.sprites())
+                              + self.fg_palms_sprite.sprites())
 
         for sprite in collidable_sprites:
             if sprite.rect.colliderect(player.rect):
@@ -236,8 +232,6 @@ class Level:
     def check_finish(self):
         if pygame.sprite.spritecollide(self.player.sprite, self.goal, False):
             self.create_overworld(self.current_level, self.new_max_level)
-
-
 
     def input(self):
         keys = pygame.key.get_pressed()
@@ -281,7 +275,7 @@ class Level:
         self.grass_sprites.draw(self.display_surface)
         # palms
         self.fg_palms_sprite.update(self.world_shift)
-        self. fg_palms_sprite.draw(self.display_surface)
+        self.fg_palms_sprite.draw(self.display_surface)
         # player sprites
         self.player.update()
         self.horizontal_movement_collision()
