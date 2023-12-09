@@ -57,7 +57,7 @@ class Overworld:
 
         # movement login
         self.move_direction = pygame.math.Vector2(0, 0)
-        self.speed = 8
+        self.speed = 7
         self.moving = False
 
         # sprites
@@ -100,8 +100,6 @@ class Overworld:
             elif keys[pygame.K_SPACE]:
                 self.create_level(self.current_level)
 
-
-
     def get_movement_data(self, direction):
         if direction == 'right':
             start = pygame.math.Vector2(self.nodes.sprites()[self.current_level].rect.center)
@@ -118,8 +116,6 @@ class Overworld:
             target_node = self.nodes.sprites()[self.current_level]
             if target_node.detection_zone.collidepoint(self.icon.sprite.pos):
                 self.moving = False
-
-
 
     def run(self):
         self.input()
