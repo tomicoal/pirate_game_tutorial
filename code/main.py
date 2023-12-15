@@ -37,7 +37,6 @@ class Game:
         self.overworld_music.stop()
 
 
-
     def create_overworld(self, current_level, new_max_level):
         if new_max_level > self.max_level:
             self.max_level = new_max_level
