@@ -25,7 +25,7 @@ class Player(pygame.sprite.Sprite):
         self.gravity = 0.8
         self.jump_speed = -16
         # width of 50 for new rect from measuring image on photoshop
-        self.collision_rect = pygame.Rect(self.rect.topleft, (50, self.rect.height))
+        self.collision_rect = pygame.Rect(self.rect.topleft, (45, self.rect.height))
 
         # player status
         self.status = "idle"
@@ -74,6 +74,8 @@ class Player(pygame.sprite.Sprite):
             self.image.set_alpha(alpha)
         else:
             self.image.set_alpha(255)
+
+        self.rect = self.image.get_rect(midbottom=self.rect.midbottom)
 
     def run_dust_animate(self):
         if self.status == "run" and self.on_ground:

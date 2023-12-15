@@ -97,7 +97,7 @@ class Level:
             if self.player.sprite.facing_right:
                 offset = pygame.math.Vector2(10, 15)
             else:
-                offset = pygame.math.Vector2(-10, -15)
+                offset = pygame.math.Vector2(-10, 15)
             fall_dust_particle = ParticleEffect(self.player.sprite.rect.midbottom - offset, "land")
             self.dust_sprite.add(fall_dust_particle)
 
@@ -277,6 +277,10 @@ class Level:
         self.bg_palms_sprite.update(self.world_shift)
         self.bg_palms_sprite.draw(self.display_surface)
 
+        # Dust
+        self.dust_sprite.update(self.world_shift)
+        self.dust_sprite.draw(self.display_surface)
+
         # terrain
         self.terrain_sprites.update(self.world_shift)
         self.terrain_sprites.draw(self.display_surface)
@@ -313,9 +317,6 @@ class Level:
         self.goal.draw(self.display_surface)
         self.scroll_x()
 
-        # Dust
-        self.dust_sprite.update(self.world_shift)
-        self.dust_sprite.draw(self.display_surface)
 
 
 
