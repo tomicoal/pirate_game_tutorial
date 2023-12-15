@@ -11,7 +11,6 @@ class Player(pygame.sprite.Sprite):
         self.animation_speed = 0.15
         self.image = self.animations["idle"][self.frame_index]
         self.rect = self.image.get_rect(topleft=pos)
-        # self.rect.scale_by(1/2)
 
         # player particles
         self.import_dust_run_particles()
@@ -25,6 +24,8 @@ class Player(pygame.sprite.Sprite):
         self.speed = 8
         self.gravity = 0.8
         self.jump_speed = -16
+        # width of 50 for new rect from measuring image on photoshop
+        self.collision_rect = pygame.Rect(self.rect.topleft, (50, self.rect.height))
 
         # player status
         self.status = "idle"
@@ -61,27 +62,18 @@ class Player(pygame.sprite.Sprite):
         image = animation[int(self.frame_index)]
         if self.facing_right:
             self.image = image
+            self.rect.bottomleft = self.collision_rect.bottomleft
+
         else:
             flipped_image = pygame.transform.flip(image, True, False)
             self.image = flipped_image
+            self.rect.bottomright = self.collision_rect.bottomright
 
         if self.invincible:
             alpha = self.wave_value()
             self.image.set_alpha(alpha)
-
-        # set the rectangle
-        if self.on_ground and self.on_right:
-            self.rect = self.image.get_rect(bottomright=self.rect.bottomright)
-        elif self.on_ground and self.on_left:
-            self.rect = self.image.get_rect(bottomleft=self.rect.bottomleft)
-        elif self.on_ground:
-            self.rect = self.image.get_rect(midbottom=self.rect.midbottom)
-        elif self.on_ceiling and self.on_right:
-            self.rect = self.image.get_rect(topright=self.rect.topright)
-        elif self.on_ceiling and self.on_left:
-            self.rect = self.image.get_rect(topleft=self.rect.topleft)
-        elif self.on_ceiling:
-            self.rect = self.image.get_rect(midtop=self.rect.midtop)
+        else:
+            self.image.set_alpha(255)
 
     def run_dust_animate(self):
         if self.status == "run" and self.on_ground:
@@ -124,7 +116,7 @@ class Player(pygame.sprite.Sprite):
 
     def apply_gravity(self):
         self.direction.y += self.gravity
-        self.rect.y += self.direction.y
+        self.collision_rect.y += self.direction.y
 
     def jump(self):
         self.direction.y = self.jump_speed
@@ -132,7 +124,7 @@ class Player(pygame.sprite.Sprite):
 
     def get_damage(self):
         if not self.invincible:
-            self.change_health(-90)
+            self.change_health(-10)
             self.invincible = True
             self.hurt_time = pygame.time.get_ticks()
 
@@ -144,7 +136,7 @@ class Player(pygame.sprite.Sprite):
 
     def wave_value(self):
         value = sin(pygame.time.get_ticks())
-        if value > 0:
+        if value < 0:
             return 255
         else:
             return 0
@@ -152,6 +144,6 @@ class Player(pygame.sprite.Sprite):
     def update(self):
         self.get_input()
         self.get_status()
+        self.invincibility_timer()
         self.animate()
         self.run_dust_animate()
-        self.invincibility_timer()
