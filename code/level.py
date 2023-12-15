@@ -31,6 +31,12 @@ class Level:
         self.goal = pygame.sprite.GroupSingle()
         self.player_setup(player_layout, change_health)
 
+        # audio setup
+        self.coin_sound = pygame.mixer.Sound('./audio/effects/coin.wav')
+        self.coin_sound.set_volume(0.1)
+        self.stomp_sound = pygame.mixer.Sound('audio/effects/stomp.wav')
+        self.stomp_sound.set_volume(0.4)
+
         # UI
         self.change_coins = change_coins
 
@@ -233,6 +239,7 @@ class Level:
     def check_coin_collision(self):
         collided_coins = pygame.sprite.spritecollide(self.player.sprite, self.coins_sprite, True)
         if collided_coins:
+            self.coin_sound.play()
             for coins in collided_coins:
                 self.change_coins(coins.value)
 
@@ -247,6 +254,7 @@ class Level:
                 enemy_top = enemy.rect.top
                 player_bottom = player.rect.bottom
                 if enemy_top < player_bottom < enemy_center and player.direction.y >= 0:
+                    self.stomp_sound.play()
                     explosion_sprite = ParticleEffect(enemy.rect.center, "explosion")
                     self.explosion_sprites.add(explosion_sprite)
                     player.jump()

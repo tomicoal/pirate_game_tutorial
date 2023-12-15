@@ -38,8 +38,14 @@ class Player(pygame.sprite.Sprite):
         # health management
         self.change_health = change_health
         self.invincible = False
-        self.invincibility_duration = 300
+        self.invincibility_duration = 500
         self.hurt_time = 0
+
+        # audio
+        self.jump_sound = pygame.mixer.Sound('audio/effects/jump.wav')
+        self.jump_sound.set_volume(0.1)
+        self.hit_sound = pygame.mixer.Sound('audio/effects/hit.wav')
+        self.hit_sound.set_volume(0.4)
 
     def import_character_assets(self):
         character_path = "./graphics/character/"
@@ -123,12 +129,15 @@ class Player(pygame.sprite.Sprite):
     def jump(self):
         self.direction.y = self.jump_speed
         self.on_ground = False
+        self.jump_sound.play()
+
 
     def get_damage(self):
         if not self.invincible:
             self.change_health(-10)
             self.invincible = True
             self.hurt_time = pygame.time.get_ticks()
+            self.hit_sound.play()
 
     def invincibility_timer(self):
         if self.invincible:
